@@ -1,9 +1,6 @@
-# GenData.py
-
 import sys
 import numpy as np
 import cv2
-import os
 
 # module level variables ##########################################################################
 MIN_CONTOUR_AREA = 100
@@ -62,7 +59,7 @@ def main():
                      ord('U'), ord('V'), ord('W'), ord('X'), ord('Y'), ord('Z'), ord('a'), ord('b'), ord('c'), ord('d'),
                      ord('e'), ord('f'), ord('g'), ord('h'), ord('i'), ord('j'), ord('k'), ord('l'), ord('m'), ord('n'),
                      ord('o'), ord('p'), ord('q'), ord('r'), ord('s'), ord('t'), ord('u'), ord('v'), ord('w'), ord('x'),
-                     ord('y'), ord('z')]
+                     ord('y'), ord('z'), ord('.'), ord(','), ord('!'), ord('?'), ord(' ')]
 
     for npaContour in npaContours:  # for each contour
         if cv2.contourArea(npaContour) > MIN_CONTOUR_AREA:  # if contour is big enough to consider
@@ -105,20 +102,14 @@ def main():
         if cv2.contourArea(npaContour) > MIN_CONTOUR_AREA:
             [intX, intY, intW, intH] = cv2.boundingRect(npaContour)
 
-            cv2.rectangle(imgTrainingNumbers1,
-                          (intX, intY),
-                          (intX + intW, intY + intH),
-                          (0, 0, 255),
-                          2)
+            cv2.rectangle(imgTrainingNumbers1, (intX, intY), (intX + intW, intY + intH), (0, 0, 255), 2)
 
             imgROI = imgThresh1[intY:intY + intH, intX:intX + intW]
-            imgROIResized = cv2.resize(imgROI, (RESIZED_IMAGE_WIDTH,
-                                                RESIZED_IMAGE_HEIGHT))
+            imgROIResized = cv2.resize(imgROI, (RESIZED_IMAGE_WIDTH, RESIZED_IMAGE_HEIGHT))
 
             cv2.imshow("imgROI", imgROI)
             cv2.imshow("imgROIResized", imgROIResized)
-            cv2.imshow("training_numbers_small.png",
-                       imgTrainingNumbers1)
+            cv2.imshow("training_numbers_small.png", imgTrainingNumbers1)
 
             intChar = cv2.waitKey(0)
             print(intChar)
@@ -140,8 +131,8 @@ def main():
 
     print("\n\ntraining complete !!\n")
 
-    np.savetxt("classifications.txt", npaClassifications)  # write flattened images to file
-    np.savetxt("flattened_images.txt", npaFlattenedImages)  #
+    np.savetxt("dataset.txt", npaClassifications)  # write flattened images to file
+    np.savetxt("dataset_1D.txt", npaFlattenedImages)  #
 
     cv2.destroyAllWindows()  # remove windows from memory
 

@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import operator
-import os
 
 # module level variables ##########################################################################
 MIN_CONTOUR_AREA = 100
@@ -36,17 +35,17 @@ class ContourWithData():
 def main():
     allContoursWithData = []                # declare empty lists,
     validContoursWithData = []              # we will fill these shortly
-    npaClassifications = np.loadtxt("Text_Files/classifications.txt", np.float32)                  # read in training classifications
-    npaFlattenedImages = np.loadtxt("Text_Files/flattened_images.txt", np.float32)                 # read in training images
+    npaClassifications = np.loadtxt("Text_Files/dataset.txt", np.float32)                  # read in training classifications
+    npaFlattenedImages = np.loadtxt("Text_Files/dataset_1D.txt", np.float32)                 # read in training images
 
 
-    npaClassifications = npaClassifications.reshape((npaClassifications.size, 1))       # reshape numpy array to 1d, necessary to pass to call to train
+    # npaClassifications = npaClassifications.reshape((npaClassifications.size, 1))       # reshape numpy array to 1d, necessary to pass to call to train
 
     kNearest = cv2.ml.KNearest_create()                   # instantiate KNN object
 
     kNearest.train(npaFlattenedImages, cv2.ml.ROW_SAMPLE, npaClassifications)
     kernel = np.ones((2,2), np.uint8)
-    imgTestingNumbers = cv2.imread("Testing_Images/small.png")          # read in testing numbers image
+    imgTestingNumbers = cv2.imread("Testing_Images/word1.png")          # read in testing numbers image
     # imgTestingNumbers = cv2.dilate(imgTestingNumbers, kernel, iterations=2)
     imgTestingNumbers = cv2.resize(imgTestingNumbers, (400,500))
 
@@ -101,7 +100,7 @@ def main():
                            contourWithData.intRectX : contourWithData.intRectX + contourWithData.intRectWidth]
 
         imgROIResized = cv2.resize(imgROI, (RESIZED_IMAGE_WIDTH, RESIZED_IMAGE_HEIGHT))             # resize image, this will be more consistent for recognition and storage
-
+        print(imgROIResized.shape)
         # print('ROI',imgROIResized)
 
         npaROIResized = imgROIResized.reshape((1, RESIZED_IMAGE_WIDTH * RESIZED_IMAGE_HEIGHT))      # flatten image into 1d numpy array

@@ -245,8 +245,8 @@ def main():
 
     print("\n\ntraining complete !!\n")
 
-    np.savetxt("classifications_handwritten.txt", npaClassifications)
-    np.savetxt("flattened_images_handwritten.txt", npaFlattenedImages)
+    np.savetxt("dataset_handwritten.txt", npaClassifications)
+    np.savetxt("dataset_handwritten_1D.txt", npaFlattenedImages)
 
     cv2.destroyAllWindows()
 

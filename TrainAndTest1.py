@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 import operator
-import os
 
 MIN_CONTOUR_AREA = 100
 
@@ -33,19 +32,19 @@ def main():
     allContoursWithData = []
     validContoursWithData = []
 
-    npaClassifications = np.loadtxt("classifications_handwritten.txt", np.float32)
-    npaFlattenedImages = np.loadtxt("flattened_images_handwritten.txt", np.float32)
+    npaClassifications = np.loadtxt("Text_Files/dataset_handwritten.txt", np.float32)
+    npaFlattenedImages = np.loadtxt("Text_Files/dataset_handwritten_1D.txt", np.float32)
 
 
 # try:
 #     except:
-#         print ("error, unable to open classifications.txt, exiting program\n")
+#         print ("error, unable to open dataset.txt, exiting program\n")
 #         os.system("pause")
 #         return
 #
 #     try:
 #     except:
-#         print("error, unable to open flattened_images.txt, exiting program\n")
+#         print("error, unable to open dataset_1D.txt, exiting program\n")
 #         os.system("pause")
 #         return
 
@@ -56,11 +55,11 @@ def main():
 
     kNearest.train(npaFlattenedImages, cv2.ml.ROW_SAMPLE, npaClassifications)
 
-    # kernel = np.ones((2,2), np.uint8)
+    kernel = np.ones((2,2), np.uint8)
 
     imgTestingNumbers = cv2.imread("Testing_Images/hand1.jpg")
 
-    # imgTestingNumbers = cv2.dilate(imgTestingNumbers, kernel, iterations=2)
+    imgTestingNumbers = cv2.erode(imgTestingNumbers, kernel, iterations=1)
 
     imgTestingNumbers = cv2.resize(imgTestingNumbers, (500, 252))
 
@@ -68,7 +67,9 @@ def main():
     imgGray = cv2.cvtColor(imgTestingNumbers, cv2.COLOR_BGR2GRAY)
 
     #Add Skew Here
-    thresh = cv2.threshold(imgGray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+    bit = cv2.bitwise_not(imgGray)
+
+    thresh = cv2.threshold(bit, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
     coords = np.column_stack(np.where(thresh > 0))
     angle = cv2.minAreaRect(coords)[-1]
 
@@ -133,6 +134,13 @@ def main():
         npaROIResized = np.float32(npaROIResized)
 
         retval, npaResults, neigh_resp, dists = kNearest.findNearest(npaROIResized, k = 1)
+        print(npaResults)
+
+        # matches = result == test_labels
+        # correct = np.count_nonzero(matches)
+        # accuracy = correct * 100.0 / result.size
+
+        # print("Accuracy is = %.2f" %accuracy +"%")
 
         strCurrentChar = str(chr(int(npaResults[0][0])))
 
